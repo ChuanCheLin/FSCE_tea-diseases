@@ -17,10 +17,13 @@ You may want to write your own script with your datasets and other customization
 
 import os
 
+from fsdet.data.datasets.coco import load_coco_json
+
 import fsdet.utils.comm as comm
 from fsdet.checkpoint import DetectionCheckpointer
 from fsdet.config import get_cfg, set_global_cfg
-from fsdet.data import MetadataCatalog, build_detection_train_loader
+from fsdet.data import build_detection_train_loader, DatasetCatalog, MetadataCatalog
+
 from fsdet.engine import (
     DefaultTrainer,
     default_argument_parser,
@@ -35,8 +38,39 @@ from fsdet.evaluation import (
     verify_results,
 )
 
-# from fsdet.data.dataset_mapper import AlbumentationMapper
+# Dataset Root
+DATASET_ROOT = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/comparison/" #need change
+DATASET_ROOT_base = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split1/base/" #need change
+ANN_ROOT = os.path.join(DATASET_ROOT, 'annotations')
+ANN_ROOT_base = os.path.join(DATASET_ROOT_base, 'annotations')
 
+TRAINVALTEST_PATH = os.path.join(DATASET_ROOT_base, 'trainvaltest')
+TEST_PATH = os.path.join(DATASET_ROOT, 'test')
+
+TRAINVALTEST_JSON = os.path.join(ANN_ROOT_base, 'instances_trainvaltest.json')    
+TEST_JSON = os.path.join(ANN_ROOT, 'instances_test.json') 
+
+# take images out from the whole dataset
+from json_handler import json_handler
+if(os.path.isdir(TRAINVALTEST_PATH)==False):
+    js = json_handler(
+    jpg_data_root= "/home/eric/mmdetection/data/VOCdevkit/datasets/VOC2007/JPEGImages/",
+    coco_data_root = DATASET_ROOT_base, subset = 'trainvaltest')
+    js.write_jpg_txt()
+    js.get_jpg_from_txt()
+
+def plain_register_dataset():
+    DatasetCatalog.register("train_tea", lambda: load_coco_json(TRAINVALTEST_JSON, TRAINVALTEST_PATH, "train_tea"))
+    MetadataCatalog.get("train_tea").set(thing_classes=['brownblight', 'algal', 'blister', 'sunburn', 'fungi_early', 'roller', 'moth', 'tortrix', 'flushworm', 'caloptilia', 'mosquito_early', 'mosquito_late', 'miner', 'thrips', 'tetrany', 'formosa', 'other'],
+                                                    json_file=TRAINVALTEST_JSON,
+                                                    image_root=TRAINVALTEST_PATH)
+
+    DatasetCatalog.register("test_tea", lambda: load_coco_json(TEST_JSON, TEST_PATH, "test_tea"))
+    MetadataCatalog.get("test_tea").set(thing_classes= ['brownblight', 'algal', 'blister', 'sunburn', 'fungi_early', 'roller', 'moth', 'tortrix', 'flushworm', 'caloptilia', 'mosquito_early', 'mosquito_late', 'miner', 'thrips', 'tetrany', 'formosa', 'other'],
+                                                json_file=TEST_JSON,
+                                                image_root=TEST_PATH)
+
+# from fsdet.data.dataset_mapper import AlbumentationMapper
 
 class Trainer(DefaultTrainer):
     """
@@ -88,6 +122,12 @@ def setup(args):
     cfg = get_cfg()
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+
+    cfg.DATASETS.TRAIN = ("train_tea",)
+    cfg.DATASETS.TEST = ("test_tea",)
+    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split1/base/"
+    cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size=2; iters_in_one_epoch = dataset_imgs/batch_size  
+
     cfg.freeze()
     set_global_cfg(cfg)
     default_setup(cfg, args)
@@ -95,7 +135,9 @@ def setup(args):
 
 
 def main(args):
+
     cfg = setup(args)
+    plain_register_dataset()
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
@@ -127,3 +169,5 @@ if __name__ == "__main__":
         dist_url=args.dist_url,
         args=(args,),
     )
+    import shutil
+    shutil.rmtree(TRAINVALTEST_PATH)
