@@ -82,31 +82,9 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-        """
-        Create evaluator(s) for a given dataset.
-        This uses the special metadata "evaluator_type" associated with each builtin dataset.
-        For your own dataset, you can simply create an evaluator manually in your
-        script and do not have to worry about the hacky if-else logic here.
-        """
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        evaluator_list = []
-        evaluator_type = MetadataCatalog.get(dataset_name).evaluator_type
-        if evaluator_type == "coco":
-            evaluator_list.append(COCOEvaluator(dataset_name, cfg, True, output_folder))
-        if evaluator_type == "pascal_voc":
-            return PascalVOCDetectionEvaluator(dataset_name)
-        if evaluator_type == "lvis":
-            return LVISEvaluator(dataset_name, cfg, True, output_folder)
-        if len(evaluator_list) == 0:
-            raise NotImplementedError(
-                "no Evaluator for the dataset {} with the type {}".format(
-                    dataset_name, evaluator_type
-                )
-            )
-        if len(evaluator_list) == 1:
-            return evaluator_list[0]
-        return DatasetEvaluators(evaluator_list)
+        return COCOEvaluator(dataset_name, cfg, distributed=False, output_dir=output_folder)
 
     @classmethod
     def build_train_loader(cls, cfg):
@@ -126,7 +104,12 @@ def setup(args):
     cfg.DATASETS.TRAIN = ("train_tea",)
     cfg.DATASETS.TEST = ("test_tea",)
     cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split1/base/"
-    cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size=2; iters_in_one_epoch = dataset_imgs/batch_size  
+    cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size; 
+    ITERS_IN_ONE_EPOCH = int(3887 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
+    cfg.SOLVER.MAX_ITER = (ITERS_IN_ONE_EPOCH * 24) - 1 # epochs
+    cfg.SOLVER.STEPS = (ITERS_IN_ONE_EPOCH*10, ITERS_IN_ONE_EPOCH*16, ITERS_IN_ONE_EPOCH*20)
+    cfg.SOLVER.GAMMA = 0.2
+    cfg.TEST.EVAL_PERIOD = 4*ITERS_IN_ONE_EPOCH 
 
     cfg.freeze()
     set_global_cfg(cfg)
@@ -169,5 +152,5 @@ if __name__ == "__main__":
         dist_url=args.dist_url,
         args=(args,),
     )
-    import shutil
-    shutil.rmtree(TRAINVALTEST_PATH)
+    # import shutil
+    # shutil.rmtree(TRAINVALTEST_PATH)
