@@ -40,7 +40,7 @@ from fsdet.evaluation import (
 
 # Dataset Root
 DATASET_ROOT = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/comparison/" #need change
-DATASET_ROOT_base = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split1/base/" #need change
+DATASET_ROOT_base = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split2/base/" #need change
 ANN_ROOT = os.path.join(DATASET_ROOT, 'annotations')
 ANN_ROOT_base = os.path.join(DATASET_ROOT_base, 'annotations')
 
@@ -103,9 +103,9 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = ("train_tea",)
     cfg.DATASETS.TEST = ("test_tea",)
-    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split1/base/"
+    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/base/"
     cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size; 
-    ITERS_IN_ONE_EPOCH = int(3887 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
+    ITERS_IN_ONE_EPOCH = int(3336 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
     cfg.SOLVER.MAX_ITER = (ITERS_IN_ONE_EPOCH * 24) - 1 # epochs
     cfg.SOLVER.STEPS = (ITERS_IN_ONE_EPOCH*10, ITERS_IN_ONE_EPOCH*16, ITERS_IN_ONE_EPOCH*20)
     cfg.SOLVER.GAMMA = 0.2
@@ -152,5 +152,5 @@ if __name__ == "__main__":
         dist_url=args.dist_url,
         args=(args,),
     )
-    # import shutil
-    # shutil.rmtree(TRAINVALTEST_PATH)
+    import shutil
+    shutil.rmtree(TRAINVALTEST_PATH)

@@ -40,7 +40,7 @@ from fsdet.evaluation import (
 
 # Dataset Root
 DATASET_ROOT = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/comparison/" #need change
-DATASET_ROOT_few = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/balanced60/" #need change
+DATASET_ROOT_few = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/balanced5/" #need change
 ANN_ROOT = os.path.join(DATASET_ROOT, 'annotations')
 ANN_ROOT_few = os.path.join(DATASET_ROOT_few, 'annotations')
 
@@ -103,7 +103,7 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = ("train_tea",)
     cfg.DATASETS.TEST = ("test_tea",)
-    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/60shot/"
+    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/5shot/"
     cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size; 
     # ITERS_IN_ONE_EPOCH = int(480 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
     # cfg.SOLVER.MAX_ITER = (ITERS_IN_ONE_EPOCH * 24) - 1 # epochs

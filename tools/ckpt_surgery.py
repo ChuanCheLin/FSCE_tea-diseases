@@ -185,20 +185,20 @@ if __name__ == '__main__':
     if args.coco:
         # COCO
         #split1
-        NOVEL_CLASSES = [
-            4, 10, 15, 16
-        ]
-        BASE_CLASSES = [
-            1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 17
-        ]
-
-        #split2
         # NOVEL_CLASSES = [
-        #     6, 8, 9, 11
+        #     4, 10, 15, 16
         # ]
         # BASE_CLASSES = [
-        #     1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17
+        #     1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 17
         # ]
+
+        #split2
+        NOVEL_CLASSES = [
+            6, 8, 9, 11
+        ]
+        BASE_CLASSES = [
+            1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17
+        ]
         ALL_CLASSES = sorted(BASE_CLASSES + NOVEL_CLASSES)
         IDMAP = {v:i for i, v in enumerate(ALL_CLASSES)}
         TAR_SIZE = 17

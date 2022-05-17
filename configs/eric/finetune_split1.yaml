@@ -50,5 +50,3 @@ TEST:
   AUG:
     ENABLED: True
   EVAL_PERIOD: 3000
-
-OUTPUT_DIR: "checkpoints/coco/faster_rcnn/set1/split1/60shot/"

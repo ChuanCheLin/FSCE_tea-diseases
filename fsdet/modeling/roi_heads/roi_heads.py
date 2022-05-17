@@ -203,7 +203,16 @@ class ROIHeads(torch.nn.Module):
             )
             # matched_idxs in [0, M)
             matched_idxs, matched_labels = self.proposal_matcher(match_quality_matrix)
-            iou, _ = match_quality_matrix.max(dim=0)
+
+            #match_quality_matrix = torch.zeros(np.shape(match_quality_matrix.cpu().numpy()))
+            if (np.shape(torch.nonzero(match_quality_matrix).cpu().numpy()) == (0, 2)): # if all are zeros
+                iou = torch.zeros(np.size(match_quality_matrix.cpu().numpy(), 1)) # set iou into zeros & fix the size
+            else:
+                iou, _ = match_quality_matrix.max(dim=0) # normal one
+                
+            # print(np.shape(match_quality_matrix.cpu().numpy()))
+            # print(np.shape(iou.cpu().numpy()))
+            
             # random sample batche_size_per_image proposals with positive fraction
             # NOTE: only matched proposals will be returned
             sampled_idxs, gt_classes = self._sample_proposals(

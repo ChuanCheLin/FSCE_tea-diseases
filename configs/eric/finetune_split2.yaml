@@ -1,7 +1,7 @@
 _BASE_: "../Base-RCNN-FPN.yaml"
 
 MODEL:
-  WEIGHTS: "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split1/base/randinit/model_reset_surgery.pth"
+  WEIGHTS: "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/base/randinit/model_reset_surgery.pth"
   MASK_ON: False
   RESNETS:
     DEPTH: 101
@@ -50,5 +50,3 @@ TEST:
   AUG:
     ENABLED: True
   EVAL_PERIOD: 3000
-
-OUTPUT_DIR: "checkpoints/coco/faster_rcnn/set1/split1/30shot/"
