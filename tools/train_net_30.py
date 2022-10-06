@@ -50,6 +50,11 @@ TEST_PATH = os.path.join(DATASET_ROOT, 'test')
 TRAINVALTEST_JSON = os.path.join(ANN_ROOT_few, 'instances_trainvaltest.json')    
 TEST_JSON = os.path.join(ANN_ROOT, 'instances_test.json') 
 
+NEW_TRAINVAL_PATH = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split4/few60_2/trainval/"
+NEW_TRAINVAL_JSON = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split4/few60_2/annotations/instances_trainval.json"
+NEW_TEST_PATH = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split4/few60_2/test/"
+NEW_TEST_JSON = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split4/few60_2/annotations/instances_test.json"
+
 # take images out from the whole dataset
 from json_handler import json_handler
 if(os.path.isdir(TRAINVALTEST_PATH)==False):
@@ -59,16 +64,26 @@ if(os.path.isdir(TRAINVALTEST_PATH)==False):
     js.write_jpg_txt()
     js.get_jpg_from_txt()
 
+classes = ['brownblight', 'algal', 'blister', 'sunburn', 'fungi_early', 'roller', 'moth', 'tortrix', 'flushworm', 'caloptilia', 'mosquito_early', 'mosquito_late', 'miner', 'thrips', 'tetrany', 'formosa', 'other', 'nodicornis', 'aleyrodidae', 'termite', 'inchmoth']
+
 def plain_register_dataset():
     DatasetCatalog.register("train_tea", lambda: load_coco_json(TRAINVALTEST_JSON, TRAINVALTEST_PATH, "train_tea"))
-    MetadataCatalog.get("train_tea").set(thing_classes=['brownblight', 'algal', 'blister', 'sunburn', 'fungi_early', 'roller', 'moth', 'tortrix', 'flushworm', 'caloptilia', 'mosquito_early', 'mosquito_late', 'miner', 'thrips', 'tetrany', 'formosa', 'other'],
+    MetadataCatalog.get("train_tea").set(thing_classes=classes,
                                                     json_file=TRAINVALTEST_JSON,
                                                     image_root=TRAINVALTEST_PATH)
 
     DatasetCatalog.register("test_tea", lambda: load_coco_json(TEST_JSON, TEST_PATH, "test_tea"))
-    MetadataCatalog.get("test_tea").set(thing_classes= ['brownblight', 'algal', 'blister', 'sunburn', 'fungi_early', 'roller', 'moth', 'tortrix', 'flushworm', 'caloptilia', 'mosquito_early', 'mosquito_late', 'miner', 'thrips', 'tetrany', 'formosa', 'other'],
+    MetadataCatalog.get("test_tea").set(thing_classes=classes,
                                                 json_file=TEST_JSON,
                                                 image_root=TEST_PATH)
+    DatasetCatalog.register("train_new", lambda: load_coco_json(NEW_TRAINVAL_JSON, NEW_TRAINVAL_PATH, "train_new"))
+    MetadataCatalog.get("train_new").set(thing_classes=classes,
+                                                json_file=NEW_TRAINVAL_JSON,
+                                                image_root=NEW_TRAINVAL_PATH)
+    DatasetCatalog.register("test_new", lambda: load_coco_json(NEW_TEST_JSON, NEW_TEST_PATH, "test_new"))
+    MetadataCatalog.get("test_new").set(thing_classes=classes,
+                                                json_file=NEW_TEST_JSON,
+                                                image_root=NEW_TEST_PATH)
 
 # from fsdet.data.dataset_mapper import AlbumentationMapper
 
@@ -101,9 +116,9 @@ def setup(args):
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
 
-    cfg.DATASETS.TRAIN = ("train_tea",)
-    cfg.DATASETS.TEST = ("test_tea",)
-    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/30shot/"
+    cfg.DATASETS.TRAIN = ("train_tea", "train_new")
+    cfg.DATASETS.TEST = ("test_tea", "test_new")
+    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split4/30shot_2classes_base_30shot/"
     cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size; 
     # ITERS_IN_ONE_EPOCH = int(480 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
     # cfg.SOLVER.MAX_ITER = (ITERS_IN_ONE_EPOCH * 24) - 1 # epochs

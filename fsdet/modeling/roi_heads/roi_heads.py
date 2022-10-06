@@ -1038,12 +1038,27 @@ class ContrastiveROIHeads(StandardROIHeads):
         box_features = self.box_head(box_features)  # [None, FC_DIM]
         pred_class_logits, pred_proposal_deltas = self.box_predictor(box_features)
         box_features_contrast = self.encoder(box_features)
+
+        # tsne
+
+        # # 1024
+        # # box_features_copy = box_features.cpu().numpy()
+        
+        # # 128
+        # box_features_contrast_copy = box_features_contrast.cpu().numpy()
+        # path = "/home/eric/FSCE_tea-diseases/temp.npy"
+        # np.save(path, box_features_contrast_copy)
+
+        # tsne
+
+
         del box_features
 
-        if self.weight_decay:
-            storage = get_event_storage()
-            if int(storage.iter) in self.decay_steps:
-                self.contrast_loss_weight *= self.decay_rate
+        # tsne close temporarily
+        # if self.weight_decay:
+        #     storage = get_event_storage()
+        #     if int(storage.iter) in self.decay_steps:
+        #         self.contrast_loss_weight *= self.decay_rate
 
         outputs = FastRCNNContrastOutputs(
             self.box2box_transform,

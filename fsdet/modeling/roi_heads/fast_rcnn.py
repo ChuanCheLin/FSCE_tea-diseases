@@ -117,6 +117,36 @@ def fast_rcnn_inference_single_image(
         keep = keep[:topk_per_image]
     boxes, scores, filter_inds = boxes[keep], scores[keep], filter_inds[keep]
 
+    ### tsne 
+    # import numpy as np    
+    # import os
+    # path_root = "/home/eric/FSCE_tea-diseases/"
+    # temp_path = "temp.npy"
+    # label_path = "labels.npy"
+    # path = "features.npy"
+    
+    # # labels
+    # labels = filter_inds.cpu().numpy()
+    # labels = labels[:, 1].reshape(-1)
+    # if os.path.isfile(label_path) == False:
+    #     np.save(label_path, labels)
+    # else:
+    #     all_labels = np.load(label_path)
+    #     all_labels = np.hstack((all_labels, labels))
+    #     np.save(label_path, all_labels)
+    #     print(np.shape(all_labels))
+    
+    # # features
+    # temp_features = np.load(temp_path) #1000 features for current image
+    # if os.path.isfile(path) == False:
+    #     np.save(path, temp_features[keep.cpu()])
+    # else:
+    #     all_features = np.load(path)
+    #     all_features = np.vstack((all_features, temp_features[keep.cpu()]))
+    #     np.save(path, all_features)
+    #     print(np.shape(all_features))
+    ### tsne
+
     result = Instances(image_shape)
     result.pred_boxes = Boxes(boxes)
     result.scores = scores

@@ -181,7 +181,7 @@ def reset_ckpt(ckpt):
 if __name__ == '__main__':
     args = parse_args()
 
-    # COCO
+    # COCO #need change
     if args.coco:
         # COCO
         #split1
@@ -193,15 +193,20 @@ if __name__ == '__main__':
         # ]
 
         #split2
-        NOVEL_CLASSES = [
-            6, 8, 9, 11
-        ]
-        BASE_CLASSES = [
-            1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17
-        ]
+        # NOVEL_CLASSES = [
+        #     6, 8, 9, 11
+        # ]
+        # BASE_CLASSES = [
+        #     1, 2, 3, 4, 5, 7, 10, 12, 13, 14, 15, 16, 17
+        # ]
+
+        # cucumber split1
+        NOVEL_CLASSES = [5, 8]
+        BASE_CLASSES = [1, 2, 3, 4, 6, 7]
+
         ALL_CLASSES = sorted(BASE_CLASSES + NOVEL_CLASSES)
         IDMAP = {v:i for i, v in enumerate(ALL_CLASSES)}
-        TAR_SIZE = 17
+        TAR_SIZE = 8 # tea = 17 
     elif args.lvis:
         # LVIS
         NOVEL_CLASSES = [

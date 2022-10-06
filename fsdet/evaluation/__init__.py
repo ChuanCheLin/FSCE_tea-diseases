@@ -1,5 +1,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 from .coco_evaluation import COCOEvaluator
+from .coco_evaluation_eric import COCOEvaluator_eric
 from .evaluator import DatasetEvaluator, DatasetEvaluators, inference_context, inference_on_dataset
 from .lvis_evaluation import LVISEvaluator
 from .pascal_voc_evaluation import PascalVOCDetectionEvaluator

@@ -40,7 +40,7 @@ from fsdet.evaluation import (
 
 # Dataset Root
 DATASET_ROOT = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/comparison/" #need change
-DATASET_ROOT_base = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split2/base/" #need change
+DATASET_ROOT_base = "/home/eric/mmdetection/data/VOCdevkit/datasets/set1/split0/base/" #need change
 ANN_ROOT = os.path.join(DATASET_ROOT, 'annotations')
 ANN_ROOT_base = os.path.join(DATASET_ROOT_base, 'annotations')
 
@@ -51,13 +51,15 @@ TRAINVALTEST_JSON = os.path.join(ANN_ROOT_base, 'instances_trainvaltest.json')
 TEST_JSON = os.path.join(ANN_ROOT, 'instances_test.json') 
 
 # take images out from the whole dataset
-from json_handler import json_handler
-if(os.path.isdir(TRAINVALTEST_PATH)==False):
-    js = json_handler(
-    jpg_data_root= "/home/eric/mmdetection/data/VOCdevkit/datasets/VOC2007/JPEGImages/",
-    coco_data_root = DATASET_ROOT_base, subset = 'trainvaltest')
-    js.write_jpg_txt()
-    js.get_jpg_from_txt()
+args = default_argument_parser().parse_args()
+if not args.eval_only:
+    from json_handler import json_handler
+    if(os.path.isdir(TRAINVALTEST_PATH)==False):
+        js = json_handler(
+        jpg_data_root= "/home/eric/mmdetection/data/VOCdevkit/datasets/VOC2007/JPEGImages/",
+        coco_data_root = DATASET_ROOT_base, subset = 'trainvaltest')
+        js.write_jpg_txt()
+        js.get_jpg_from_txt()
 
 def plain_register_dataset():
     DatasetCatalog.register("train_tea", lambda: load_coco_json(TRAINVALTEST_JSON, TRAINVALTEST_PATH, "train_tea"))
@@ -103,9 +105,9 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = ("train_tea",)
     cfg.DATASETS.TEST = ("test_tea",)
-    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split2/base/"
+    cfg.OUTPUT_DIR = "/home/eric/FSCE_tea-diseases/checkpoints/coco/faster_rcnn/set1/split0/base/" #need change
     cfg.SOLVER.IMS_PER_BATCH = 3  # batch_size; 
-    ITERS_IN_ONE_EPOCH = int(3336 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
+    ITERS_IN_ONE_EPOCH = int(2897 / cfg.SOLVER.IMS_PER_BATCH) #need change; iters_in_one_epoch = dataset_imgs/batch_size 
     cfg.SOLVER.MAX_ITER = (ITERS_IN_ONE_EPOCH * 24) - 1 # epochs
     cfg.SOLVER.STEPS = (ITERS_IN_ONE_EPOCH*10, ITERS_IN_ONE_EPOCH*16, ITERS_IN_ONE_EPOCH*20)
     cfg.SOLVER.GAMMA = 0.2
